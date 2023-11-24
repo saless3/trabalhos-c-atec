@@ -1,0 +1,164 @@
+using System;
+using System.Linq;
+using static System.Console;
+using System.Threading;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        WriteLine("Bem-vindo ao Jogo da Forca!");
+
+        var letrasDigitadas = new HashSet<char>();
+        var letrasErradas = new HashSet<char>();
+
+        // Adicione um array de dicas correspondentes às palavras
+        string[] dicas = { "Comida com recheio doce (contem '-')", "dormir", "Peça musical em formato circular", "ja foi amarelo", "Veículo", "Doença", "fica frio ai", "Parte do dia", "assustador", "figura geometricar", "Criatura assustadora", "Cidade no interior de São Paulo", "time com nome de cidade", "Doença respiratória difícil de pronunciar" };
+
+        string[] palavras = { "pao-doce", "sonho", "cd", "pipoca", "bicicleta", "leptospirose", "arcondicionado", "noite", "pesadelo", "paralelepipedo", "monstro", "pindamonhangaba", "sao paulo", "pneumoultramicroscopicossilicovulcanoconiotico" };
+
+        Random random = new Random();
+        int indicePalavraSorteada = random.Next(palavras.Length);
+
+        string palavraSelecionada = palavras[indicePalavraSorteada];
+        string dicaSelecionada = dicas[indicePalavraSorteada];
+
+        char[] letrasCorretas = new char[palavraSelecionada.Length];
+
+        for (int i = 0; i < letrasCorretas.Length; i++)
+        {
+            letrasCorretas[i] = '_';
+        }
+
+        int tentativasRestantes = 6;
+        bool jogoEmAndamento = true;
+
+        while (jogoEmAndamento)
+        {
+            Clear();
+
+            ExibirBoneco(tentativasRestantes);
+            WriteLine($"\nPalavra: {string.Join(" ", letrasCorretas)}");
+            WriteLine($"Dica: {dicaSelecionada}");
+            WriteLine($"Tentativas Restantes: {tentativasRestantes}");
+
+            Write("Letras erradas: ");
+            foreach (char letraErrada in letrasErradas)
+            {
+                Write($"{letraErrada} ");
+            }
+            WriteLine();
+
+            Write("Digite uma letra: ");
+            char tentativa = ReadKey().KeyChar;
+
+            if (letrasDigitadas.Contains(tentativa))
+            {
+                WriteLine("\nVocê já tentou essa letra. Tente novamente.");
+                Thread.Sleep(700);
+                continue;
+            }
+
+            letrasDigitadas.Add(tentativa);
+
+            bool letraEncontrada = false;
+
+            for (int i = 0; i < palavraSelecionada.Length; i++)
+            {
+                if (palavraSelecionada[i] == tentativa)
+                {
+                    letrasCorretas[i] = tentativa;
+                    letraEncontrada = true;
+                }
+            }
+
+            if (!letraEncontrada)
+            {
+                letrasErradas.Add(tentativa);
+                tentativasRestantes--;
+            }
+
+            if (tentativasRestantes == 0)
+            {
+                Clear();
+                ExibirBoneco(tentativasRestantes);
+                WriteLine($"\nVocê perdeu! A palavra correta era: {palavraSelecionada}");
+                jogoEmAndamento = false;
+            }
+            else if (!letrasCorretas.Contains('_'))
+            {
+                Clear();
+                ExibirBoneco(tentativasRestantes);
+                WriteLine($"\nParabéns! Você acertou a palavra: {palavraSelecionada}");
+                jogoEmAndamento = false;
+            }
+        }
+
+        WriteLine("\nObrigado por jogar!");
+    }
+
+    static void ExibirBoneco(int tentativasRestantes)
+    {
+        switch (tentativasRestantes)
+        {
+
+            case 6:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                break;
+            case 5:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║     O");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                break;
+            case 4:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║     O");
+                WriteLine(" ║     |");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                break;
+            case 3:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║     O");
+                WriteLine(" ║    /|");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                break;
+            case 2:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║     O");
+                WriteLine(" ║    /|\\");
+                WriteLine(" ║      ");
+                WriteLine(" ║      ");
+                break;
+            case 1:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║     O");
+                WriteLine(" ║    /|\\");
+                WriteLine(" ║    / ");
+                WriteLine(" ║      ");
+                break;
+            case 0:
+                WriteLine(" ╔═════╗");
+                WriteLine(" ║     |");
+                WriteLine(" ║     O");
+                WriteLine(" ║    /|\\");
+                WriteLine(" ║    / \\");
+                WriteLine(" ║      ");
+                break;
+        }
+    }
+}
